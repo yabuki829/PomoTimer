@@ -9,7 +9,7 @@ const defaultTimer = {
 
 export const Timer = () => {
   
-  let countDown = 10
+  let countDown = 1500
   let isStart = false
   function zeroume(time:number){
     return  ( '00' + time ).slice( -2 );
@@ -39,7 +39,7 @@ export const Timer = () => {
         if (countDown == 0){
           clearInterval(intervalId)
           // 休憩のタイマーを開始したい
-          
+
         }
        
       },1000)
