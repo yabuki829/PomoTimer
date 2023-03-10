@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { convertCompilerOptionsFromJson } from 'typescript'
+import React, { useCallback, useState } from 'react'
 
 const defaultTimer = {
   seconds :0 ,
@@ -9,8 +8,10 @@ const defaultTimer = {
 
 export const Timer = () => {
   
-  let countDown = 1500
-  let isStart = false
+  let countDown = 10
+  const [isStart, setIsStart] = useState(false)
+  const [isStop, setIsStop] = useState(false)
+
   function zeroume(time:number){
     return  ( '00' + time ).slice( -2 );
   }
@@ -31,27 +32,44 @@ export const Timer = () => {
   }
   // タイマーを起動する
   function TapStartButton(){
-    isStart = !isStart
-    if (isStart) {
+    // isStart = !isStart
+    
+    if (!isStop) {
+      setIsStart(!isStart)
+      console.log("タイマーを開始する")
+
+      countDown = 1500
       const intervalId = setInterval(()=>{
         countDown -= 1
         updateTimer(countDown)
-        if (countDown == 0){
+        if (countDown == 0 || isStop){
           clearInterval(intervalId)
           // 休憩のタイマーを開始したい
-
+          StartRestTimer()
         }
        
       },1000)
     }
+  }
+  function StartRestTimer(){
+    countDown = 300
 
+    const intervalId = setInterval(()=>{
+      
+      countDown -= 1
+      updateTimer(countDown)
+      if (countDown == 0){
+        clearInterval(intervalId)
+        // 休憩のタイマーを開始したい   
+        setIsStart(false)
+        
+      }
+     
+    },1000)
   }
-  let buttonName = ""
-  if (isStart) {
-    buttonName = "一時停止"
-  }
-  else{
-    buttonName = "始める"
+
+  function StopTimer(){
+    setIsStop(!isStop)
   }
   return (
     <div className=" flex justify-center py-16">
@@ -62,10 +80,15 @@ export const Timer = () => {
         </div>
         
 
-        <div className='flex justify-center'>
-          
+        <div className='flex justify-center '>
+      
           <div className="mt-16">
-            <button onClick={() => {TapStartButton()}} className="shadow-lg px-2 py-1  bg-white text-lg  font-semibold rounded  bg-red-400 hover:bg-gray-200">{buttonName}</button>
+            {
+              !isStart ? (<button  onClick={() => {TapStartButton()}} className="shadow-lg px-2 py-1  bg-white text-lg  font-semibold rounded  bg-red-400 hover:bg-gray-200">始める</button>): (<></>)
+            }
+           
+            
+            
           </div>
         </div>
       </div>
